@@ -21,6 +21,30 @@ namespace DotnetMyCrud.API
             _response = response;
         }
 
+
+        [HttpGet()]
+        public async Task<IActionResult> GetContact()
+        {
+            try
+            {
+                var results = await _contactRepository.getContact();
+                if (results.code == "201")
+                {
+                    var response = _response.GetResponse<ResponseData>(ResponseEnum.R201);
+                    return Ok(new { code = response.code, message = response.message, data = results.data });
+                }
+
+                var res = _response.GetResponse<ResponseData>(ResponseEnum.R000);
+                return StatusCode(500, new { code = res.code, message = res.message, description = results.message });
+
+            }
+            catch (Exception ex)
+            {
+                var response = _response.GetResponse<ResponseData>(ResponseEnum.R001);
+                return BadRequest(new { code = response.code, message = response.message, description = ex.Message });
+            }
+        }
+
         [HttpPost()]
         public async Task<IActionResult> AddContact([FromBody] AddContactDto contactDto)
         {
@@ -45,28 +69,6 @@ namespace DotnetMyCrud.API
             }
         }
 
-        [HttpGet()]
-        public async Task<IActionResult> GetContact()
-        {
-            try
-            {
-                var results = await _contactRepository.getContact();
-                if (results.code == "201")
-                {
-                    var response = _response.GetResponse<ResponseData>(ResponseEnum.R201);
-                    return Ok(new { code = response.code, message = response.message, data = results.data });
-                }
-
-                var res = _response.GetResponse<ResponseData>(ResponseEnum.R000);
-                return StatusCode(500, new { code = res.code, message = res.message, description = results.message });
-
-            }
-            catch (Exception ex)
-            {
-                var response = _response.GetResponse<ResponseData>(ResponseEnum.R001);
-                return BadRequest(new { code = response.code, message = response.message, description = ex.Message });
-            }
-        }
 
         [HttpPut()]
         public async Task<IActionResult> UpdateContact([FromBody] Contact contact)
@@ -99,6 +101,29 @@ namespace DotnetMyCrud.API
             {
 
                 var results = await _contactRepository.deleteContact(Id);
+                if (results.code == "201")
+                {
+                    var response = _response.GetResponse<ResponseData>(ResponseEnum.R201);
+                    return Ok(new { code = response.code, message = response.message, data = results.data });
+                }
+
+                var res = _response.GetResponse<ResponseData>(ResponseEnum.R000);
+                return StatusCode(500, new { code = res.code, message = res.message, description = results.message });
+
+            }
+            catch (Exception ex)
+            {
+                var response = _response.GetResponse<ResponseData>(ResponseEnum.R001);
+                return BadRequest(new { code = response.code, message = response.message, description = ex.Message });
+            }
+        }
+
+        [HttpGet("search/{search}")]
+        public async Task<IActionResult> SearchContact([FromRoute] string search)
+        {
+            try
+            {
+                var results = await _contactRepository.searchContact(search);
                 if (results.code == "201")
                 {
                     var response = _response.GetResponse<ResponseData>(ResponseEnum.R201);

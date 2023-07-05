@@ -1,10 +1,12 @@
 global using DotnetMyCrud.Domain.DBContexts;
 global using DotnetMyCrud.Shared.Dto;
 global using DotnetMyCrud.Dto;
-global using AutoMapper;
 global using DotnetMyCrud.Shared.Extension;
 global using Dotnet_CRUD.Domain.Repository.Interfaces;
 global using Microsoft.AspNetCore.Mvc;
+global using AutoMapper;
+global using Dapper;
+global using System.Data.Common;
 using DotnetMyCrud.Shared;
 using Microsoft.EntityFrameworkCore;
 
@@ -33,11 +35,11 @@ var app = builder.Build();
 
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+// if (app.Environment.IsDevelopment())
+// {
+app.UseSwagger();
+app.UseSwaggerUI();
+// }
 
 app.UseHttpsRedirection();
 

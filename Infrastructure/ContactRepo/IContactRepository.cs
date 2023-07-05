@@ -12,5 +12,6 @@ namespace DotnetMyCrud.Infrastructure.ContactRepo
         Task<Response> getContact();
         Task<Response> updateContact(Contact contact);
         Task<Response> deleteContact(string id);
+        Task<Response> searchContact(string search);
     }
 }

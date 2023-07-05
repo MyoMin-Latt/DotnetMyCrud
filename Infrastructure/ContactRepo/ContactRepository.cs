@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
+
 using System.Linq;
 using System.Threading.Tasks;
-
-using DotnetMyCrud.Dto;
+using Dapper;
 using Microsoft.EntityFrameworkCore;
 
 namespace DotnetMyCrud.Infrastructure.ContactRepo
@@ -51,10 +51,12 @@ namespace DotnetMyCrud.Infrastructure.ContactRepo
             try
             {
                 List<Contact> contactList = await _DBContext.Contacts.ToListAsync();
+                Mapper _mapper = MapperExtension.GetMapper<Contact, GetContactDto>();
+                List<GetContactDto> getContacts = _mapper.Map<List<GetContactDto>>(contactList);
                 var res = new Response()
                 {
                     code = "201",
-                    data = contactList,
+                    data = getContacts,
                 };
                 return res;
             }
@@ -125,6 +127,30 @@ namespace DotnetMyCrud.Infrastructure.ContactRepo
                     };
                 }
                 return res;
+            }
+            catch (Exception e)
+            {
+
+                throw e;
+            }
+        }
+
+        public Task<Response> searchContact(string search)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@search", search);
+
+                DbConnection conn = _DBContext.Database.GetDbConnection();
+                var procedure = "[SearchContact]";
+                var result_query = conn.Query<dynamic>(procedure, parameters, commandType: System.Data.CommandType.StoredProcedure);
+                var res = new Response()
+                {
+                    code = "201",
+                    data = result_query
+                };
+                return Task.FromResult(res);
             }
             catch (Exception e)
             {
